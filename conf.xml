@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+	<general>    
+    <!-- 根目录-->
+		<docRoot>www</docRoot>
+
+    <!-- 临时文件目录 -->
+ 		<tmpRoot>tmp</tmpRoot>
+
+    <!-- 默认文件名,以','分隔 -->
+ 		<defaultFileNames>index.php,index.html,default.html</defaultFileNames>
+
+    <!-- 绑定的服务器IP地址,空值表示绑定所有本机IP -->
+ 		<serverIP></serverIP>
+
+    <!-- 端口号 -->
+ 		<serverPort>80</serverPort>
+
+    <!-- 目录是否可见 -->
+ 		<directoryVisible>no</directoryVisible>
+
+    <!-- 最大连接数 -->
+ 		<maxConnections>5000</maxConnections>
+
+    <!-- 每个IP的最大连接数,0表示不限制 -->
+ 		<maxConnectionsPerIP>0</maxConnectionsPerIP>
+
+    <!-- 每个连接的最大速度 字节/秒,0表示不限制 -->
+ 		<maxSpeed>0</maxSpeed>
+
+    <!-- 每个连接的会话超时,0表示不限制 -->
+ 		<sessionTimeout>0</sessionTimeout>
+
+    <!-- 网络操作接收超时,0表示不限制,不推荐 -->
+ 		<recvTimeout>5000</recvTimeout>
+
+    <!-- 网络操作发送超时,0表示不限制,不推荐 -->
+ 		<sendTimeout>5000</sendTimeout>
+
+    <!-- keep-alive超时,0表示不限制,不推荐 -->
+    <keepAliveTimeout>15000</keepAliveTimeout>
+    
+    <!-- 运行后自动开始HTTP服务: yes/no -->
+    <autoRun>no</autoRun>
+    
+ 	</general>
+  <log>
+    <!-- 日志设置 -->
+    
+    <!-- 如果文件名未空则不输出文件日志 -->
+    <fileName>log\http.log</fileName>
+    
+    <!-- 日志级别,从详细到简略: LL_ALL, LL_TRACE,  LL_DEBUG, LL_INFO, LL_ERROR, LL_FATAL, LL_NONE -->
+    <level>LL_INFO</level>
+    
+    <!-- 是否在窗口中显示日志内容, on/off -->
+    <screenLog>on</screenLog>
+  </log>
+</settings>

@@ -1,0 +1,412 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\WebServer.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""l.CHS\\afxres.rc""          // 标准组件\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\WebServer.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_START
+    BUTTON      ID_STOP
+    SEPARATOR
+    BUTTON      ID_SETTING
+    SEPARATOR
+    BUTTON      ID_ENABLE_LOG
+    BUTTON      ID_CLEAR_LOG
+    SEPARATOR
+    BUTTON      ID_APP_EXIT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU
+BEGIN
+    POPUP "控制(&P)"
+    BEGIN
+        MENUITEM "设置(&S)",                      ID_SETTING
+        MENUITEM SEPARATOR
+        MENUITEM "启动",                          ID_START
+        MENUITEM "停止",                          ID_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "退出(&X)",                      ID_APP_EXIT
+    END
+    POPUP "日志"
+    BEGIN
+        MENUITEM "禁用屏幕日志",                      ID_ENABLE_LOG
+        MENUITEM "清空屏幕日志",                      ID_CLEAR_LOG
+    END
+    POPUP "视图(&V)"
+    BEGIN
+        MENUITEM "工具栏(&T)",                     ID_VIEW_TOOLBAR
+        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于 Q++ HTTP Server(&A)...",   ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 209, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "关于 Q++ HTTP Server - by Que's C++ Studio"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,15,20,20
+    LTEXT           "Q++ HTTP Server v0.20",IDC_STATIC,52,14,150,8,SS_NOPREFIX
+    LTEXT           "阙荣文 Que's C++ Studio (C) 版权所有",IDC_STATIC,52,28,137,8
+    DEFPUSHBUTTON   "确定",IDOK,88,55,50,14,WS_GROUP
+    LTEXT           "联系作者: querw@sina.com",IDC_STATIC,52,42,146,8
+END
+
+IDD_DIALOG_SETTING DIALOGEX 0, 0, 436, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "设置 - Q++ HTTP Server"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "开机自动启动",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,13,63,10
+    CONTROL         "启动后自动运行",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,13,67,10
+    CONTROL         "浏览目录",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,156,13,46,10
+    EDITTEXT        IDC_EDIT8,255,12,167,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT15,56,31,167,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_COMBO1,267,32,48,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "在主窗口中显示日志内容",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,322,33,102,10
+    EDITTEXT        IDC_EDIT1,37,50,172,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT14,253,50,169,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,46,69,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT3,144,69,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT4,241,69,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT5,371,69,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT16,67,88,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT6,183,88,45,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT7,315,88,52,14,ES_AUTOHSCROLL
+    CONTROL         "开启PHP",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,116,42,10
+    EDITTEXT        IDC_EDIT10,139,114,213,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT11,380,114,41,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT12,71,134,24,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT13,148,134,24,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_EDIT9,203,134,149,14,ES_AUTOHSCROLL
+    CONTROL         "缓存PHP输出",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,361,137,61,10
+    DEFPUSHBUTTON   "确定",IDOK,165,175,50,14
+    PUSHBUTTON      "取消",IDCANCEL,220,175,50,14
+    LTEXT           "根目录",IDC_STATIC,10,52,25,8
+    LTEXT           "端口",IDC_STATIC,10,72,17,8
+    LTEXT           "* 新的设置只有在服务器重新启动后才能生效.",IDC_STATIC,8,157,163,8
+    LTEXT           "最大连接数",IDC_STATIC,97,72,43,8
+    LTEXT           "会话超时",IDC_STATIC,205,72,33,8
+    LTEXT           "不活跃连接超时",IDC_STATIC,308,72,57,8
+    LTEXT           "秒",IDC_STATIC,413,72,11,8
+    LTEXT           "秒",IDC_STATIC,283,72,12,8
+    LTEXT           "* 超时设置为0表示永远不会过期,连接数或带宽为0表示不限制.",IDC_STATIC,184,157,221,8
+    LTEXT           "每IP最大连接",IDC_STATIC,130,90,48,8
+    LTEXT           "每连接最大带宽",IDC_STATIC,254,90,57,8
+    LTEXT           "KB/s",IDC_STATIC,373,90,20,8
+    LTEXT           "个",IDC_STATIC,234,90,12,8
+    LTEXT           "默认文件名",IDC_STATIC,209,13,41,8
+    LTEXT           "扩展名",IDC_STATIC,175,137,25,8
+    LTEXT           "端口",IDC_STATIC,359,116,17,8
+    LTEXT           "PHP-CGI.EXE路径/IP地址",IDC_STATIC,53,117,84,9
+    LTEXT           "最大进程/连接数",IDC_STATIC,9,137,59,8
+    LTEXT           "等待队列大小",IDC_STATIC,100,137,49,8
+    LTEXT           "临时目录",IDC_STATIC,214,53,33,8
+    LTEXT           "日志级别",IDC_STATIC,230,33,33,8
+    LTEXT           "日志文件名",IDC_STATIC,10,33,41,8
+    GROUPBOX        "",IDC_STATIC,5,105,424,66,WS_DISABLED
+    GROUPBOX        "",IDC_STATIC,5,3,424,104,WS_DISABLED
+    LTEXT           "Keep-Alive 超时",IDC_STATIC,10,90,53,8
+    LTEXT           "秒",IDC_STATIC,107,90,13,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,2,0,0
+ PRODUCTVERSION 0,2,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "Comments", "Q++ HTTP 服务器"
+            VALUE "CompanyName", "Que's C++ Studio"
+            VALUE "FileDescription", "Q++ HTTP 服务器 by Que's C++ Studio"
+            VALUE "FileVersion", "0.2.0.0"
+            VALUE "InternalName", "HTTPServer.exe"
+            VALUE "LegalCopyright", "Que's C++ Studio 保留所有权利。"
+            VALUE "OriginalFilename", "HTTPServer.exe"
+            VALUE "ProductName", "Q++ HTTP 服务器"
+            VALUE "ProductVersion", "0.2.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 202
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_DIALOG_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 429
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows 套接字初始化失败。"
+END
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "Q++ HTTP Server - by Que's C++ Studio"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_APP_TITLE       "Q++ HTTP Server"
+    AFX_IDS_IDLEMESSAGE     "就绪"
+END
+
+STRINGTABLE
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE
+BEGIN
+    ID_APP_ABOUT            "显示程序信息、版本号和版权\n关于"
+    ID_APP_EXIT             "退出应用程序；提示保存文档\n退出"
+END
+
+STRINGTABLE
+BEGIN
+    ID_NEXT_PANE            "切换到下一个窗格\n下一窗格"
+    ID_PREV_PANE            "切换回上一个窗格\n上一窗格"
+END
+
+STRINGTABLE
+BEGIN
+    ID_WINDOW_SPLIT         "将活动窗口拆分为多个窗格\n拆分"
+END
+
+STRINGTABLE
+BEGIN
+    ID_EDIT_CLEAR           "清除选定内容\n清除"
+    ID_EDIT_CLEAR_ALL       "清除全部内容\n全部清除"
+    ID_EDIT_COPY            "复制选定内容并将其放到剪贴板上\n复制"
+    ID_EDIT_CUT             "剪切选定内容并将其放到剪贴板上\n剪切"
+    ID_EDIT_FIND            "查找指定的文本\n查找"
+    ID_EDIT_PASTE           "插入剪贴板内容\n粘贴"
+    ID_EDIT_REPEAT          "重复上一操作\n重复"
+    ID_EDIT_REPLACE         "用其他文本替换特定的文本\n替换"
+    ID_EDIT_SELECT_ALL      "选定整个文档\n全选"
+    ID_EDIT_UNDO            "撤消上一操作\n撤消"
+    ID_EDIT_REDO            "恢复上次撤消的操作\n重做"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_TOOLBAR         "显示或隐藏工具栏\n切换工具栏"
+    ID_VIEW_STATUS_BAR      "显示或隐藏状态栏\n切换状态栏"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCSIZE          "更改窗口大小"
+    AFX_IDS_SCMOVE          "更改窗口位置"
+    AFX_IDS_SCMINIMIZE      "将窗口缩小为图标"
+    AFX_IDS_SCMAXIMIZE      "使窗口最大化显示"
+    AFX_IDS_SCNEXTWINDOW    "切换到下一个文档窗口"
+    AFX_IDS_SCPREVWINDOW    "切换到前一个文档窗口"
+    AFX_IDS_SCCLOSE         "关闭活动窗口并提示保存文档"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCRESTORE       "将窗口恢复到正常大小"
+    AFX_IDS_SCTASKLIST      "激活任务列表"
+END
+
+STRINGTABLE
+BEGIN
+    ID_SETTING              "设置\n设置参数"
+    ID_START                "启动\n启动HTTP服务"
+    ID_STOP                 "停止\n停止HTTP服务"
+    ID_PAUSE                "暂停HTTP服务"
+    ID_LOG                  "是否输出日志"
+END
+
+STRINGTABLE
+BEGIN
+    ID_ENABLE_LOG           "禁止输出屏幕日志\n禁止输出屏幕日志"
+    ID_CLEAR_LOG            "清空屏幕日志\n清空屏幕日志"
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\WebServer.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "l.CHS\afxres.rc"          // 标准组件
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,111 @@
+Q++ HTTP Server v0.20
+作者: 阙荣文
+
+前言
+1. 关于版本号
+就像爱因斯坦曾经说过,知道的越多,不知道的也越多.在改进 Q++ HTTP Server 的过称中,我越来越觉得还需要完成的工作太多,我自己有很多知识也不全面,之前的版本妄称1.5岂不是贻笑大方?然而,无知者无畏,因为我们敢想,敢干,敢犯错误,所以我们才能进步.
+这个版本就姑且称为 0.20 吧,也是对自己的一个鞭策,希望能坚持下去直到真正的 1.00 版完成的那一天.
+
+2. 关于造轮子
+常常有人问我,现在有很多开源,高效,稳定的HTTP项目,如 Apache, Lighttpd, Nginx等,为什么还要花那么大精力去重复"造轮子"呢?就我个人来说,做这个东西很大一部分原因是因为闲着想练练手,结果越做越想把它完善下去,就这样一步步到了现在这个程度.关于造轮子,的确,一般情况下没有必要重复"发明轮子",我想说的是,正是因为有那么一群人愿意去"造轮子",所以才会不断有更新的,更好的"轮子"被造出来.
+
+3. 关于 UNICODE
+有那么一段时间,我非常推崇在程序中统一用 UNICODE 字符串,特别是在 WIN32 平台下.然而我意识到字符串的编码只是显示方面的问题不应该影响到程序内在的逻辑,现在更倾向于 ubuntu 那样使用 utf-8 作为前台字符编码.所以在这次修改中主要的几个类的接口全部使用 char 或者 std::string 而不再使用 wchar_t 或者 std::wstring (用 MFC 做的界面部分还是使用 UNICODE,这个与程序核心无关).
+
+正文
+1. 从 CGI 说起.
+HTTP协议最早是为静态网页设计的,在那个蛮荒的年代,静态的文件共享已经足够让人惊喜了.随着时间的推移,在人类永无止境的需求面前,静态网页变得越来越力不从心.比如新闻网站,用人工的方式为每一个新发生的事件添加一个静态网页对编辑人员来说显然是个折磨.人们希望能够动态的生成网页,让计算机代替人类完成这类工作.最早出现的就是 CGI.
+一个典型的 CGI URL 像这样:http://www.xxx.com/cgi-bin/getdate.exe 目的很简单,把服务器的日期显示在客户机浏览器上. 当Web 服务器接收的这样一个请求时,它就创建 /cgi-bin/getdate.exe 进程,重定向它的 stdin, stdout 和 stderr. 对于进程 /cgi-bin/getdate.exe 来说,它根本不知道Web服务器,也不知道客户端浏览器,它只是用 scanf 从标准输入读取参数,用 printf 向标准输出写结果,如果需要还可以用 getenv 从系统环境变量表中获得额外的参数. 由于 /cgi-bin/getdate.exe 进程的 stdin, stdout 和 stderr 已经被 Web 服务器重定向(常常用 pipe)所以 Web 服务器可以通过读写 pipe 向进程 /cgi-bin/getdate.exe 发送参数或者获取结果,然后再转发到客户端.
+这一切看起来似乎非常完美: Web 服务器和 CGI 进程是相互独立的,并且 CGI 进程运行的环境非常单纯,不需要管Web服务器也不需要管客户端浏览器.程序员可以用任意他喜欢的语言来编写 CGI 进程或者脚本.但是,就像所有完美的东西总是不存在一样,CGI一样也有缺点,那就是:效率.对于每个客户请求,Web服务器都需要生成一个 CGI 进程来处理它,而生成进程的成本是很高的,并且一个操作系统中的总进程数也是有限制的,所以 CGI 无法应对大规模,高并发的访问需求.
+CGI 之后,开始流行ASP,JSP/serverlet等.以JSP为代表,它们相对于 CGI 最大的区别是 JSP 使用线程而不是进程来处理客户端请求.线程的生成成本较低,也不用负担进程间通讯的成本,并且可以复用,就是说处理完一个客户端请求后,serverlet线程可以继续处理下一个请求,而不是像 CGI 进程那样退出了事.所以 JSP/serverlet的效率比 CGI 要高不少.同样,JSP们也不是完美的,由于JSP以组件/插件(IIS的 ISAPI)的方式运行在 Web 服务器的进程空间内,所以它们会相互影响.如果说 CGI 和 Web 服务器是朋友关系的话,JSP和 Web 服务器就是夫妻关系,拥有它们的优点的同时也包含了它们的缺点:一旦 JSP 模块发送问题就会导致 Web 服务器停止服务.从设计模式上说,JSP 属于紧耦合, 而 CGI 的耦合度就小很多.对于开发人员来说还有更要命的问题:由于是在同一进程空间内以组件/插件的方式运行,而每个 Web 服务器的接口又都不一样(Apache 和 IIS 的编程接口就不同),学习成本大大增加了.
+
+2. 什么是 Fast CGI, PHP 如何支持 Fast CGI.
+到了90年代, Open Market 发布了应用程序和 Web 服务器间交互的新的协议,称为 Fast CGI.它解决了 CGI 最大的问题:效率,并且保留了 CGI 的大部分优点:开放,松散耦合,语言无关等,并且在某种程度上保留了对 CGI 的向下兼容( CGI 程序最少只要添加3行代码即可升级为 Fast CGI 程序).
+Fast CGI 是一种协议,定义了服务器端应用程序如何同 Web 服务器通信.由 Open Market 发布,主页是: http://www.fastcgi.com/ 
+在 Fast CGI 协议下,处理客户端 HTTP 请求报文的应用程序有两种方式同 Web 服务器通信:
+2.1. 远程模式: 应用程序监听某个 TCP 端口,等待 Web 服务器连接,连接建立以后, Web 服务器把客户端的 HTTP 请求报文发送到应用程序,应用程序把处理结果通过同一个连接发送回 Web服务器,并由 Web 服务器转发到客户端浏览器.
+2.2. 本地模式: Web 服务器或者 Fast CGI代理程序创建应用程序,并重定向该应用程序的 stdin 为 unix 域监听套接字句柄(unix系统)或者命名管道句柄(Windows NT),应用程序启动,并等待来自 Web 服务器的连接.Unix系统中,进程间的协作用的比较多,而且有 fork 和 exec 的支持,重定向子进程的 stdin, stdout 很容易, <<UNIX环境高级编程>>进程间通信那章讲 pipe 的几段示例代码都有演示如何重定向,有兴趣可以翻开来看看. Windows中用的就相对较少了,由于没有 fork 调用,并且 exec 的实现机制也完全不一样,所以稍微麻烦一点,MSDN上有一篇文章演示如何重定向子进程的 stdin/stdout. http://msdn.microsoft.com/en-us/library/windows/desktop/ms682499%28v=vs.85%29.aspx 也可以参考 Q++ HTTP Server v0.2 源代码 FCGIFactory::spawnChild() 函数.
+一旦连接建立,本地模式和远程模式就没有区别了,应用程序和 Web 服务器之间通过数据包交换数据,每个数据包被称为 "Fast CGI Record",每个 record 由 record header 和 record body 组成, record header 是固定长度的, record body 的长度由 record header 中的某个字段指定. 不管是 TCP, Unix 域套接字还是NT命名管道,都是"流",意味着一个数据包可能要接收多次才能完成,或者接收一次就有若干个 Fast CGI Record 需要处理.关于 Fast CGI Record 的详细说明可以查看 http://www.fastcgi.com/ 的文档介绍,以下引用其中的一个例子来说明应用程序如何通过 Fast CGI 与 Web服务器进程交互:
+{FCGI_BEGIN_REQUEST,   1, {FCGI_RESPONDER, 0}}
+{FCGI_PARAMS,          1, "\013\002SERVER_PORT80\013\016SERVER_ADDR199.170.183.42 ... "}
+{FCGI_PARAMS,          1, ""}
+{FCGI_STDIN,           1, ""}
+
+    {FCGI_STDOUT,      1, "Content-type: text/html\r\n\r\n<ht"}
+    {FCGI_STDERR,      1, "config error: missing SI_UID\n"}
+    {FCGI_STDOUT,      1, "ml>\n<head> ... "}
+    {FCGI_STDOUT,      1, ""}
+    {FCGI_STDERR,      1, ""}
+    {FCGI_END_REQUEST, 1, {938, FCGI_REQUEST_COMPLETE}}
+
+说明:
+(1). {FCGI_BEGIN_REQUEST,   1, {FCGI_RESPONDER, 0}} 表示一个 Fast CGI Record, 其中 FCGI_BEGIN_REQUEST 表示请求开始, 1 是请求的 ID 号码, FCGI_RESPONDER 表示 Fast CGI 应用程序的服务类型是响应器,即 Web 服务器会把 Fast CGI 应用程序产生的输出转发到客户端.
+(2). {FCGI_PARAMS,          1, "\013\002SERVER_PORT80\013\016SERVER_ADDR199.170.183.42 ... "} FCGI_PARAMS 表示参数,即原 CGI 模式中 Web 服务器作为环境变量传递给 CGI 进程的那些参数,如服务器地址,客户端地址,客户端浏览器类型等.
+(3). {FCGI_PARAMS,          1, ""} 一个空的参数 Record 表示所有参数都已经发送完毕.
+(4). {FCGI_STDIN,           1, ""} 一个空的 Stdin Record 表示此次请求中,客户端除了 HTTP 请求头外没有发送数据.如果客户端浏览器使用了 POST 方法,则会有 Stdin 数据需要发送到 Fast CGI 进程.
+(5). {FCGI_STDOUT,      1, "Content-type: text/html\r\n\r\n<ht"} Web 服务器接收到来自 Fast CGI 进程输出的数据, FCGI_STDOUT 表示是标准输出,即原 CGI 进程用 printf 输出的数据, Web 服务器应该把此类数据转发到客户端.
+(6). {FCGI_STDERR,      1, "config error: missing SI_UID\n"} Web 服务器接收到来自 Fast CGI 进程输出的数据, FCGI_STDERR 表示是标准错误输出,即原 CGI 进程用 stderr 输出的错误信息, Web 服务器可以把此类信息写入日志或者发送到客户端.
+(7). {FCGI_END_REQUEST, 1, {938, FCGI_REQUEST_COMPLETE}} 表示请求结束, Web 服务器收到这个 Record 之后就可以重用其中的请求ID了,此例中是"1".
+
+PHP 从版本5.3开始就不再支持 ISAPI 了,全面采用 CGI/Fast CGI 模式,PHP 团队对 ISAPI 的态度由此可见一斑.毕竟 ISAPI 只是微软一家的标准,而且性能上对比 Fast CGI 没有任何优势,开源的 PHP 团队采用 ISAPI 本来就是无奈之举,在IIS支持 Fast CGI 之后,弃用它也是意料之中,似乎还有点迫不及待.
+
+3. Q++ HTTP Server v0.20 主要类简介
+IOCPNetwork 网络模块,管理所有套接字,包括侦听套接字. IOCPNetwork 封装了 IOCP 异步套接字模型,把各种类型的套接字函数统一封装为回调函数.
+HTTPServer 实现了接口 IHTTPServer,是服务器在内存中的表现,所有对象最终依附它而存在.
+HTTPRequest 实现了接口 IHTTPRequest,封装了 HTTP 协议中的请求报文,提供若干函数用于获取请求报文中的各种信息,比如 HTTP 方法, URL, POST 数据等.
+HTTPResponder 实现了接口 IHTTPResponder,以一个 IHTTPRequest 对象为参数,生成一个 HTTP 协议的响应报文,并发送到客户端.
+FCGIResponder 实现了接口 IHTTPResponder,运用 Fast CGI 协议,生成一个 HTTP 协议的响应报文,并发送到客户端.
+FCGIFactory,管理/维护 Fast CGI 的本地进程或者远程连接池.
+HTTPConfig,用 XML 配置文件实现了接口 IHTTPConfig,作为 IHTTPServer 实例的配置接口.
+Logger 日志模块.
+Lock 封装读写锁和互斥锁.
+memfile 模拟 C 标准文件IO实现可以自动增长的内存缓冲区.
+WINFile 模拟 C 标准文件IO直接用 Windows API 访问文件系统,以避开 C 标准流IO的最大打开限制.
+XMLDocument 解析 xml 文件为内存树(DOM).
+TimeQueue 用一个可等待定时内核对象和一个线程实现定时器队列.
+
+4. 程序结构和流程简介
+
+4.1 入口函数 HTTPServer::run(IHTTPConfig *conf, IHTTPServerStatusHandler *statusHandler)
+保存配置参数,初始化网络模块,创建侦听套接字后发起第一次 accept 调用,准备接受客户端连接.
+
+4.2 HTTPServer::onAccept(bool sucess)
+IOCP网络模块发现侦听套接字可读时,回调此函数, HTTPServer 为新客户连接分配一个 connection_context_t 结构用于保存该连接相关的所有信息:
+typedef struct			
+{
+	iocp_key_t		clientSock;			// 客户端套接字
+	IRequest*		request;			// HTTP请求报文
+	IResponder*		responder;			// HTTP响应报文
+	__int64			startTime;			// 连接开始时的时间.
+	__int64			endTime;				// 连接结束时的时间
+	char			ip[MAX_IP_LENGTH + 1];  // 客户端连接IP地址
+	unsigned int	port;					// 客户端连接端口
+}connection_context_t;
+创建了 HTTPRequest 作为 IRequest 接口的实例之后,调用它的入口函数 HTTPRequest::run(conn_id_t connId, iocp_key_t clientSock) 开始接收 HTTP 请求报文. HTTPRequest 对象可以直接访问网络模块 IOCPNetwork,所以入口函数 run 被调用后, 它能直接从客户端套接字接收 HTTP 请求报文而不再需要 HTTPServer 的协助.
+
+4.3 void HTTPServer::onRequest(IRequest* request, int status)
+IRequest对象的实例在接收完 HTTP 请求报文后,回调此函数. HTTPServer 根据客户请求的类型生成一个 IResponder 以发送 HTTP 响应报文, IResponder 的实例可能是 HTTPRequest(处理静态文件)或者是 FCGIResponder(处理支持 Fast CGI 协议的动态网页如 PHP). 生成 IResponder 实例之后, HTTPServer 调用IHTTPResponder 的入口函数 int run(conn_id_t connId, iocp_key_t clientSock, IRequest *request).和 IRequest 对象类似, IResponder 对象也直接调用网络模块接口从 Fast CGI 进程读取数据或者发送数据到 HTTP 客户端,直到请求处理完成.
+
+4.4 void HTTPServer::onResponder(IResponder *responder, int status)
+IResponder 处理完客户端请求之后回调此函数以关闭连接,回收资源.
+
+以上4个函数完整描述了一个 "HTTP连接" 的生命周期.
+
+这样的结构最大的优点是便于扩展,如果需要支持其他协议,只需实现 IResponder 即可.缺点回调函数会导致程序执行流比较混乱.在执行清理时尤其要注意.比如 IResponder 在处理完 HTTP 请求报文后回调 HTTPServer::onResponder ,而 HTTPServer::onResponder 会把 IResponder 实例删除.所有在 IResponder 要特别注意,一旦回调了 HTTPServer::onResponder 之后就不应该再访问任何数据成员了,就像一个对象如果调用了 delete this 就不应该再访问自己的数据成员一样.
+
+5. 可能存在的问题.
+我之前没有开发高并发应用程序的经验,有一些细节不是很有把握,我认为 Q++ HTTP Server v0.20 可能存在的问题如下:
+5.1 受限于一个进程能打开的最大文件句柄数,Q++ HTTP Server v0.20 能够支持的最大连接数可能比较小(内存足够的前提下),我查到的资料是16384,应该可以通过修改启动参数增大这个数值,但是我没试过.
+5.2 TimeQueue类,没有用像上一个版本那样用 WINDOWS TimerQueue API 有两个原因,一是 WINDOWS TimerQueue API 不允许在定时器回调函数中删除定时器对象,二是 WINDOWS TimerQueue API 使用了线程池,我不是很喜欢.在开发 Q++ HTTP Server v0.20 的整个过程中,尽量控制程序规模,减少内存占用,我把 Q++ HTTP Server v0.20 定位为学习交流和开发者使用的一款 HTTP 服务器,不要让使用者觉得 Q++ HTTP Server v0.20 拖慢了他的电脑. Q++ HTTP Server v0.20 可能问题在于当有很多定时器时,大量的队列操作可能会影响定时器的精度.
+5.3 FCGIResponder的代码写的很糟糕,结构不清晰,执行流很跳跃,暂时没想到怎么改.
+    
+后记
+1.关于性能优化,应该以优化程序结构和算法为主,而不是去抠语言的小细节,小技巧.这也是我经常返回 std::string 的原因,虽然有一些成本,但是程序读起来比较自然. 
+
+2. 用于读写 XML 文件的 XMLDocument 类还很不完善,内存用量大, XPath 也没有实现.只是因为是我自己以前写的代码,勉强用上去,如果不喜欢改用其他 XML 解析库也一样.
+
+3. 过度封装让人恶心,C++库普遍都有这个问题,为了抽象而抽象,定义了一层又一层的类/接口,只会让人晕头转向找不到重点.说到接口,还是C语言的好,简约明了,一个函数一个功能,看起来舒服,理解起来容易. 在Q++ HTTP Server v0.20 源码中,我尽量控制类的数量和继承层数,尽量做到看到每个一个类名就能大概推测出这个类的功能并能轻易的定位实现的代码,而不是在类的森林中一层又一层的查找,面对对象是思想而不是手段.
+
+0.20版断断续续写了有5个月的时间,大多数时间都花在了结构设计上,好多想法,反反复复,最后形成 IRequest, IResponder 分离,使用网络事件回调驱动各个对象独立运行这么一个设计.在分离 IOCP 网络模块的时候关于线程同步的问题也折磨了我好久,现在的实现最终没有使用同步控制,因为所有的套接字同一时间都只有一个异步操作在进行,不需要同步控制.
+
+关于 Fast CGI 的中文资料比较少,主要停留在翻译官方文档的程度,站在 Web 服务器开发者角度上的就更少了. Lighttpd 和 Nginx 的源码虽然是公开的,不过中文资料中专门提到 Fast CGI 实现细节的似乎也没有,虽然没有什么难度,我这个实现也算是填补空白吧,希望有兴趣的朋友可以交流一下.
