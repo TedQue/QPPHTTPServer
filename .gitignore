@@ -19,3 +19,12 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio tmp files
+*.pdb
+*.ilk
+*.sdf
+*.user
+*.pch
+*.tlog
+*.log
